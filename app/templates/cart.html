@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block title %}Your cart - ShopEase{% endblock %}
+{% block content %}
+<h1>Your cart</h1>
+{% if not s["items"] %}
+  <p class="empty">Your cart is empty. <a href="{{ url_for('shop.index') }}">Continue shopping</a></p>
+{% else %}
+<table class="cart">
+  <thead><tr><th>Product</th><th>Price</th><th>Qty</th><th>Total</th><th></th></tr></thead>
+  <tbody>
+  {% for line in s["items"] %}
+    <tr>
+      <td>{{ line.name }}</td>
+      <td>&#8377;{{ line.price }}</td>
+      <td>
+        <form method="post" action="{{ url_for('shop.web_update', product_id=line.product_id) }}" class="inline">
+          <input type="number" name="qty" min="0" max="10" value="{{ line.qty }}" aria-label="Quantity">
+          <button class="small">Update</button>
+        </form>
+      </td>
+      <td>&#8377;{{ line.line_total }}</td>
+      <td>
+        <form method="post" action="{{ url_for('shop.web_remove', product_id=line.product_id) }}">
+          <button class="small ghost">Remove</button>
+        </form>
+      </td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+<div class="summary">
+  <form method="post" class="coupon">
+    <input name="coupon" placeholder="Coupon code (try SAVE10)" value="{{ s.coupon or '' }}" aria-label="Coupon code">
+    <button class="small">Apply</button>
+  </form>
+  <dl>
+    <dt>Subtotal</dt><dd>&#8377;{{ s.subtotal }}</dd>
+    <dt>Discount</dt><dd>- &#8377;{{ s.discount }}</dd>
+    <dt>Delivery</dt><dd>{% if s.delivery %}&#8377;{{ s.delivery }}{% else %}Free{% endif %}</dd>
+    <dt class="total">Total</dt><dd class="total">&#8377;{{ s.total }}</dd>
+  </dl>
+</div>
+{% endif %}
+{% endblock %}

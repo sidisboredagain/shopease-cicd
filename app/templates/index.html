@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>{% if search %}Results for "{{ search }}"{% else %}All products{% endif %}</h1>
+{% if not products %}<p class="empty">No products match your search.</p>{% endif %}
+<div class="grid">
+  {% for p in products %}
+  <article class="card">
+    <div class="cat">{{ p.category }}</div>
+    <h2>{{ p.name }}</h2>
+    <div class="price">&#8377;{{ p.price }}</div>
+    {% if p.stock > 0 %}
+      <div class="stock">{{ p.stock }} in stock</div>
+      <form method="post" action="{{ url_for('shop.web_add', product_id=p.id) }}">
+        <button>Add to cart</button>
+      </form>
+    {% else %}
+      <div class="stock out">Out of stock</div>
+      <button disabled>Unavailable</button>
+    {% endif %}
+  </article>
+  {% endfor %}
+</div>
+{% endblock %}

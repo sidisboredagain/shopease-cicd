@@ -1,0 +1,104 @@
+# ShopEase CI/CD pipeline
+# Runs on every push and pull request to main:
+#   1. Lint  ->  2. Test  ->  3. Build & smoke test Docker image  ->  4. Deploy (main branch only)
+
+name: ShopEase CI/CD
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  IMAGE_NAME: ghcr.io/${{ github.repository_owner }}/shopease
+
+jobs:
+  # ---------------- Stage 1: Code quality ----------------
+  lint:
+    name: 1. Lint (flake8)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -r requirements-dev.txt
+      - run: flake8 .
+
+  # ---------------- Stage 2: Automated tests ----------------
+  test:
+    name: 2. Test (Python ${{ matrix.python-version }})
+    needs: lint
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.11", "3.12"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+      - run: pip install -r requirements-dev.txt
+      - name: Run unit and integration tests with coverage
+        run: pytest -v --cov=app --cov-report=term-missing --cov-report=xml --cov-fail-under=80
+      - name: Upload coverage report
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-py${{ matrix.python-version }}
+          path: coverage.xml
+
+  # ---------------- Stage 3: Build ----------------
+  build:
+    name: 3. Build & smoke test image
+    needs: test
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build Docker image
+        run: docker build -t shopease:${{ github.sha }} .
+      - name: Smoke test the container
+        run: |
+          docker run -d --name shopease -p 8000:8000 -e APP_VERSION=${{ github.sha }} shopease:${{ github.sha }}
+          for i in $(seq 1 15); do
+            if curl -fs http://localhost:8000/health; then echo; echo "Smoke test passed"; exit 0; fi
+            sleep 2
+          done
+          echo "Smoke test failed"; docker logs shopease; exit 1
+      - name: Push image to GitHub Container Registry
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: |
+          echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+          docker tag shopease:${{ github.sha }} $IMAGE_NAME:${{ github.sha }}
+          docker tag shopease:${{ github.sha }} $IMAGE_NAME:latest
+          docker push $IMAGE_NAME:${{ github.sha }}
+          docker push $IMAGE_NAME:latest
+
+  # ---------------- Stage 4: Continuous deployment ----------------
+  deploy:
+    name: 4. Deploy to production
+    needs: build
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - name: Trigger deployment on the hosting platform
+        env:
+          DEPLOY_HOOK_URL: ${{ secrets.DEPLOY_HOOK_URL }}
+        run: |
+          if [ -z "$DEPLOY_HOOK_URL" ]; then
+            echo "DEPLOY_HOOK_URL secret is not set - skipping deployment."
+            echo "Add it under Settings > Secrets and variables > Actions to enable auto-deploy."
+            exit 0
+          fi
+          curl -fsS -X POST "$DEPLOY_HOOK_URL"
+          echo "Deployment triggered for commit ${{ github.sha }}"

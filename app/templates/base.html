@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}ShopEase{% endblock %}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="{{ url_for('shop.index') }}">Shop<span>Ease</span></a>
+    <form class="search" action="{{ url_for('shop.index') }}" method="get">
+      <input name="q" placeholder="Search products" value="{{ search or '' }}" aria-label="Search products">
+    </form>
+    <a class="cartlink" href="{{ url_for('shop.cart_page') }}">Cart ({{ cart_count }})</a>
+  </header>
+  <main>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% for cat, msg in messages %}<div class="flash {{ cat }}">{{ msg }}</div>{% endfor %}
+    {% endwith %}
+    {% block content %}{% endblock %}
+  </main>
+  <footer>ShopEase v{{ config.APP_VERSION }} &middot; built and deployed with a CI/CD pipeline</footer>
+</body>
+</html>
