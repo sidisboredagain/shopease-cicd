@@ -1,11 +1,11 @@
-# EcoFinds – Online Shopping App with a DevOps CI/CD Pipeline
+# ShopEase – Online Shopping App with a DevOps CI/CD Pipeline
 
-![CI/CD](https://github.com/sidisboredagain/EcoFinds-cicd/actions/workflows/ci-cd.yml/badge.svg)
+![CI/CD](https://github.com/sidisboredagain/shopease-cicd/actions/workflows/ci-cd.yml/badge.svg)
 
-EcoFinds is a small online shopping web application built with **Python Flask**. The main goal of the project is **not** the shop itself. The goal is the **DevOps CI/CD pipeline** around it. Every time code is pushed to GitHub, the pipeline automatically **checks the code, runs the tests, builds a Docker image and deploys it**, with no manual testing or copying of files.
+ShopEase is a small online shopping web application built with **Python Flask**. The main goal of the project is **not** the shop itself. The goal is the **DevOps CI/CD pipeline** around it. Every time code is pushed to GitHub, the pipeline automatically **checks the code, runs the tests, builds a Docker image and deploys it**, with no manual testing or copying of files.
 
 > Unit 5 – Case Study 3: *DevOps Practices and CI/CD Pipelines* · Software Engineering
-> Sathvik R B · NB25CSE422 · CSE E
+> Siddharth P · NB25CSE347 · CSE E
 
 ---
 
@@ -41,7 +41,7 @@ A software company runs an online shopping application. Developers update it oft
 ## 4. Project structure
 
 ```
-EcoFinds-cicd/
+shopease-cicd/
 ├── .github/workflows/ci-cd.yml   # the CI/CD pipeline (4 stages)
 ├── app/
 │   ├── __init__.py               # app factory + version
@@ -62,11 +62,12 @@ EcoFinds-cicd/
 
 ## 5. How the pipeline works
 
+![Pipeline](docs/pipeline_diagram.png)
 
 | Stage | Job | What happens | Runs on |
 |---|---|---|---|
 | 1 | **Lint** | `flake8 .` checks code style and common mistakes | every push and PR |
-| 2 | **Test** | `pytest` runs 42 tests on Python 3.11 and 3.12; fails if coverage < 80% | every push and PR |
+| 2 | **Test** | `pytest` runs 33 tests on Python 3.11 and 3.12; fails if coverage < 80% | every push and PR |
 | 3 | **Build** | `docker build`, then start the container and call `/health` (smoke test); push the image to GHCR | build on every push and PR; push to GHCR only on `main` |
 | 4 | **Deploy** | Calls the hosting platform's deploy hook | `main` only |
 
@@ -93,7 +94,7 @@ Each stage `needs` the one before it, so **if any stage fails, the later stages 
 | Check | Result |
 |---|---|
 | flake8 lint | 0 issues |
-| Tests | **42 passed**, 0 failed (19 unit + 14 integration) |
+| Tests | **33 passed**, 0 failed (19 unit + 14 integration) |
 | Code coverage | **97%** (minimum required: 80%) |
 | Docker build | Success, image size 188 MB |
 | Container smoke test | `/health` returned `{"status":"ok","version":"1.0.0"}` |
@@ -103,7 +104,7 @@ Each stage `needs` the one before it, so **if any stage fails, the later stages 
 
 | Home page | Cart with coupon |
 |---|---|
-|
+| ![Home](docs/screenshots/01_home.png) | ![Cart](docs/screenshots/03_cart_coupon.png) |
 
 ## 8. Run it yourself
 
@@ -120,8 +121,8 @@ flake8 .
 pytest -v --cov=app
 
 # 4. Run with Docker  ->  http://localhost:8000
-docker build -t EcoFinds .
-docker run -p 8000:8000 EcoFinds
+docker build -t shopease .
+docker run -p 8000:8000 shopease
 
 # 5. Run the whole pipeline locally
 bash scripts/run_pipeline.sh
@@ -134,7 +135,7 @@ The deploy job is ready but needs a hosting target. Create a web service on a pl
 
 | Implemented and tested | Proposed (future work) |
 |---|---|
-| Shop app, REST API, 42 tests, lint, Docker image, smoke test, workflow file, GHCR push step, deploy step (needs secret) | Live hosting with a public URL, a real database (PostgreSQL), user login and payments, staging environment, Slack/email alerts, security scanning (e.g. CodeQL, Trivy) |
+| Shop app, REST API, 33 tests, lint, Docker image, smoke test, workflow file, GHCR push step, deploy step (needs secret) | Live hosting with a public URL, a real database (PostgreSQL), user login and payments, staging environment, Slack/email alerts, security scanning (e.g. CodeQL, Trivy) |
 
 ## 10. Future improvements
 - Add a PostgreSQL database instead of in-memory products
@@ -144,7 +145,7 @@ The deploy job is ready but needs a hosting target. Create a web service on a pl
 - Add load testing and monitoring (e.g. Prometheus and Grafana)
 
 ## 11. Conclusion
-EcoFinds shows how DevOps practices remove manual work from releasing software. With CI, every change is checked and tested automatically. With CD, every approved change is packaged and delivered the same way each time. The result is faster releases, fewer bugs reaching customers and a clear, repeatable process.
+ShopEase shows how DevOps practices remove manual work from releasing software. With CI, every change is checked and tested automatically. With CD, every approved change is packaged and delivered the same way each time. The result is faster releases, fewer bugs reaching customers and a clear, repeatable process.
 
 ---
 Licence: MIT · Made for Software Engineering Unit 5
