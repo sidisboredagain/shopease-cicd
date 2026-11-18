@@ -1,8 +1,8 @@
-# ShopEase – Online Shopping App with a DevOps CI/CD Pipeline
+# EcoFinds – Online Shopping App with a DevOps CI/CD Pipeline
 
-![CI/CD](https://github.com/sidisboredagain/shopease-cicd/actions/workflows/ci-cd.yml/badge.svg)
+![CI/CD](https://github.com/sidisboredagain/EcoFinds-cicd/actions/workflows/ci-cd.yml/badge.svg)
 
-ShopEase is a small online shopping web application built with **Python Flask**. The main goal of the project is **not** the shop itself. The goal is the **DevOps CI/CD pipeline** around it. Every time code is pushed to GitHub, the pipeline automatically **checks the code, runs the tests, builds a Docker image and deploys it**, with no manual testing or copying of files.
+EcoFinds is a small online shopping web application built with **Python Flask**. The main goal of the project is **not** the shop itself. The goal is the **DevOps CI/CD pipeline** around it. Every time code is pushed to GitHub, the pipeline automatically **checks the code, runs the tests, builds a Docker image and deploys it**, with no manual testing or copying of files.
 
 > Unit 5 – Case Study 3: *DevOps Practices and CI/CD Pipelines* · Software Engineering
 > Siddharth P · NB25CSE347 · CSE E
@@ -41,7 +41,7 @@ A software company runs an online shopping application. Developers update it oft
 ## 4. Project structure
 
 ```
-shopease-cicd/
+EcoFinds-cicd/
 ├── .github/workflows/ci-cd.yml   # the CI/CD pipeline (4 stages)
 ├── app/
 │   ├── __init__.py               # app factory + version
@@ -121,8 +121,8 @@ flake8 .
 pytest -v --cov=app
 
 # 4. Run with Docker  ->  http://localhost:8000
-docker build -t shopease .
-docker run -p 8000:8000 shopease
+docker build -t EcoFinds .
+docker run -p 8000:8000 EcoFinds
 
 # 5. Run the whole pipeline locally
 bash scripts/run_pipeline.sh
@@ -145,7 +145,7 @@ The deploy job is ready but needs a hosting target. Create a web service on a pl
 - Add load testing and monitoring (e.g. Prometheus and Grafana)
 
 ## 11. Conclusion
-ShopEase shows how DevOps practices remove manual work from releasing software. With CI, every change is checked and tested automatically. With CD, every approved change is packaged and delivered the same way each time. The result is faster releases, fewer bugs reaching customers and a clear, repeatable process.
+EcoFinds shows how DevOps practices remove manual work from releasing software. With CI, every change is checked and tested automatically. With CD, every approved change is packaged and delivered the same way each time. The result is faster releases, fewer bugs reaching customers and a clear, repeatable process.
 
 ---
 Licence: MIT · Made for Software Engineering Unit 5
