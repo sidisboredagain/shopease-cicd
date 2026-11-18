@@ -62,7 +62,6 @@ EcoFinds-cicd/
 
 ## 5. How the pipeline works
 
-![Pipeline](docs/pipeline_diagram.png)
 
 | Stage | Job | What happens | Runs on |
 |---|---|---|---|
@@ -104,7 +103,7 @@ Each stage `needs` the one before it, so **if any stage fails, the later stages 
 
 | Home page | Cart with coupon |
 |---|---|
-| ![Home](docs/screenshots/01_home.png) | ![Cart](docs/screenshots/03_cart_coupon.png) |
+|
 
 ## 8. Run it yourself
 
