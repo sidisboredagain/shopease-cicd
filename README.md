@@ -5,7 +5,7 @@
 EcoFinds is a small online shopping web application built with **Python Flask**. The main goal of the project is **not** the shop itself. The goal is the **DevOps CI/CD pipeline** around it. Every time code is pushed to GitHub, the pipeline automatically **checks the code, runs the tests, builds a Docker image and deploys it**, with no manual testing or copying of files.
 
 > Unit 5 – Case Study 3: *DevOps Practices and CI/CD Pipelines* · Software Engineering
-> Siddharth P · NB25CSE347 · CSE E
+> Sathvik R B · NB25CSE332 · CSE E
 
 ---
 
